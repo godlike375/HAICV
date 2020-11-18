@@ -252,9 +252,6 @@ def loop():
 
 	# loop over the tracked objects
 	cur = len(objects.items())
-	if(prev!=cur):
-		print(cur)
-		prev = cur
 
 	for (objectID, centroid) in objects.items():
 		# check to see if a trackable object exists for the current
@@ -299,10 +296,10 @@ def loop():
 
 		# draw both the ID of the object and the centroid of the
 		# object on the output frame
-		text = "ID {}".format(objectID)
-		cv2.putText(rgb, text, (centroid[0] - 10, centroid[1] - 10),
-			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-		cv2.circle(rgb, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
+		#text = "ID {}".format(objectID)
+		#cv2.putText(rgb, text, (centroid[0] - 10, centroid[1] - 10),
+		#	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+		cv2.circle(rgb, (centroid[0], centroid[1]-20), 4, (0, 255, 0), -1)
 
 	# construct a tuple of information we will be displaying on the
 	# frame

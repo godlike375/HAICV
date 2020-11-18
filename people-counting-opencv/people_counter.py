@@ -70,11 +70,11 @@ class App(Frame):
 		self.update_clock()
 		Label(text="Зашло:", fg="black", font=("Gotham", 14)) \
 			.grid(row=0, column=0, padx=0, pady=2)
-		self.up = Label(text="10", fg="black", font=("Gotham", 14))
+		self.up = Label(text="0", fg="black", font=("Gotham", 14))
 		self.up.grid(row=0, column=1, padx=0, pady=2)
 		Label(text="Вышло:", fg="black", font=("Gotham", 14)) \
 			.grid(row=0, column=2, padx=0, pady=2)
-		self.down = Label(text="5", fg="black", font=("Gotham", 14))
+		self.down = Label(text="0", fg="black", font=("Gotham", 14))
 		self.down.grid(row=0, column=3, padx=0, pady=2)
 		Label(text="IP:", fg="black", font=("Gotham", 14)) \
 			.grid(row=0, column=4, padx=0, pady=2)

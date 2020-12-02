@@ -13,7 +13,6 @@
 from pyimagesearch.centroidtracker import CentroidTracker
 from pyimagesearch.trackableobject import TrackableObject
 from imutils.video import VideoStream
-from imutils.video import FPS
 import numpy as np
 import argparse
 import imutils
@@ -59,6 +58,62 @@ else:
 	print("[INFO] opening video file...")
 	vs = cv2.VideoCapture(args["input"])
 
+from tkinter import *
+from PIL import Image, ImageTk
+
+class App(Frame):
+	def __init__(self,master=None):
+		Frame.__init__(self, master)
+		self.master = master
+		self.label = Label(text="", fg="black", font=("Gotham", 14))
+		self.label.grid(row = 0, column=11, padx=0, pady=2)
+		self.update_clock()
+		Label(text="Зашло:", fg="black", font=("Gotham", 14)) \
+			.grid(row=0, column=0, padx=0, pady=2)
+		self.up = Label(text="0", fg="black", font=("Gotham", 14))
+		self.up.grid(row=0, column=1, padx=0, pady=2)
+		Label(text="Вышло:", fg="black", font=("Gotham", 14)) \
+			.grid(row=0, column=2, padx=0, pady=2)
+		self.down = Label(text="0", fg="black", font=("Gotham", 14))
+		self.down.grid(row=0, column=3, padx=0, pady=2)
+		Label(text="IP:", fg="black", font=("Gotham", 14)) \
+			.grid(row=0, column=4, padx=0, pady=2)
+		Entry(width=30, font=("Gotham", 10)) \
+			.grid(row=0, column=5, columnspan=3)
+		Button(text="Отправить", font=("Gotham", 9)).grid(row=0, column=10)
+		imageFrame = Frame(master, width=602, height=600)
+		imageFrame.grid(row=2, column=0, columnspan=12, padx=10, pady=2)
+		self.lmain = Label(imageFrame)
+		self.lmain.grid(row=0, column=0)
+		self.cap = cv2.VideoCapture(0)
+
+
+	def update_clock(self):
+		now = time.strftime("%H:%M")
+		self.label.configure(text=now)
+		self.after(1000, self.update_clock)
+
+	def show_frame(self, frame):
+		img = Image.fromarray(frame)
+		imgtk = ImageTk.PhotoImage(image=img)
+		self.lmain.imgtk = imgtk
+		self.lmain.configure(image=imgtk)
+
+
+#Set up GUI
+root = Tk()  #Makes main window
+root.wm_title("HAICV")
+app=App(root)
+
+#Graphics window
+
+
+#Capture video frames
+
+
+  #Display 2
+
+
 # initialize the video writer (we'll instantiate later if need be)
 writer = None
 
@@ -76,15 +131,15 @@ trackableObjects = {}
 
 # initialize the total number of frames processed thus far, along
 # with the total number of objects that have moved either up or down
-totalFrames = 0
 totalDown = 0
 totalUp = 0
+totalFrames = 0
 
 # start the frames per second throughput estimator
-fps = FPS().start()
 prev = -1
 # loop over frames from the video stream
-while True:
+def loop():
+	global app, writer, W, H, trackers, trackableObjects, ct, totalDown, totalUp, prev, totalFrames
 	# grab the next frame and handle if we are reading from either
 	# VideoCapture or VideoStream
 	frame = vs.read()
@@ -93,7 +148,7 @@ while True:
 	# if we are viewing a video and we did not grab a frame then we
 	# have reached the end of the video
 	if args["input"] is not None and frame is None:
-		break
+		return
 
 	# resize the frame to have a maximum width of 500 pixels (the
 	# less data we have, the faster we can process it), then convert
@@ -189,7 +244,7 @@ while True:
 	# draw a horizontal line in the center of the frame -- once an
 	# object crosses this line we will determine whether they were
 	# moving 'up' or 'down'
-	cv2.line(frame, (0, H // 2), (W, H // 2), (0, 255, 255), 2)
+	cv2.line(rgb, (0, H // 2), (W, H // 2), (0, 255, 255), 2)
 
 	# use the centroid tracker to associate the (1) old object
 	# centroids with (2) the newly computed object centroids
@@ -197,9 +252,6 @@ while True:
 
 	# loop over the tracked objects
 	cur = len(objects.items())
-	if(prev!=cur):
-		print(cur)
-		prev = cur
 
 	for (objectID, centroid) in objects.items():
 		# check to see if a trackable object exists for the current
@@ -228,6 +280,7 @@ while True:
 				# line, count the object
 				if direction < 0 and centroid[1] < H // 2:
 					totalUp += 1
+					app.up.configure(text = totalUp)
 					to.counted = True
 
 				# if the direction is positive (indicating the object
@@ -235,6 +288,7 @@ while True:
 				# center line, count the object
 				elif direction > 0 and centroid[1] > H // 2:
 					totalDown += 1
+					app.down.configure(text = totalDown)
 					to.counted = True
 
 		# store the trackable object in our dictionary
@@ -242,10 +296,10 @@ while True:
 
 		# draw both the ID of the object and the centroid of the
 		# object on the output frame
-		text = "ID {}".format(objectID)
-		cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10),
-			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-		cv2.circle(frame, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
+		#text = "ID {}".format(objectID)
+		#cv2.putText(rgb, text, (centroid[0] - 10, centroid[1] - 10),
+		#	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+		cv2.circle(rgb, (centroid[0], centroid[1]-20), 4, (0, 255, 0), -1)
 
 	# construct a tuple of information we will be displaying on the
 	# frame
@@ -256,32 +310,39 @@ while True:
 	]
 
 	# loop over the info tuples and draw them on our frame
-	for (i, (k, v)) in enumerate(info):
-		text = "{}: {}".format(k, v)
-		cv2.putText(frame, text, (10, H - ((i * 20) + 20)),
-			cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+	#for (i, (k, v)) in enumerate(info):
+	#	text = "{}: {}".format(k, v)
+	#	cv2.putText(rgb, text, (10, H - ((i * 20) + 20)),
+	#		cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
 	# check to see if we should write the frame to disk
 	if writer is not None:
 		writer.write(frame)
 
 	# show the output frame
-	cv2.imshow("Frame", frame)
-	key = cv2.waitKey(1) & 0xFF
+	app.show_frame(rgb)
+	root.after(25, loop)
+
+	totalFrames = totalFrames+1
+
+	  # Starts GUI
+	#cv2.imshow("Frame", frame)
+	#key = cv2.waitKey(1) & 0xFF
 
 	# if the `q` key was pressed, break from the loop
-	if key == ord("q"):
-		break
+	#if key == ord("q"):
+	#	break
 
 	# increment the total number of frames processed thus far and
 	# then update the FPS counter
-	totalFrames += 1
-	fps.update()
+
+loop()
+
+root.mainloop()
 
 # stop the timer and display FPS information
-fps.stop()
-print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
-print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+#print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
+#print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 # check to see if we need to release the video writer pointer
 if writer is not None:

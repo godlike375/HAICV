@@ -29,9 +29,10 @@ import Room
 
 
 class App(Frame):
-	def __init__(self,master=None):
-		Frame.__init__(self, master)
-		self.master = master
+	def __init__(self):
+		self.master = Tk()
+		self.master.wm_title("HAICV")
+		Frame.__init__(self, self.master)
 		self.label = Label(text="", fg="black", font=("Gotham", 14))
 		self.label.grid(row = 0, column=11, padx=0, pady=2)
 		self.update_clock()
@@ -48,15 +49,16 @@ class App(Frame):
 		Entry(width=30, font=("Gotham", 10)) \
 			.grid(row=0, column=5, columnspan=3)
 		Button(text="Отправить", font=("Gotham", 9)).grid(row=0, column=10)
-		imageFrame = Frame(master, width=602, height=600)
+		imageFrame = Frame(self.master, width=602, height=600)
 		imageFrame.grid(row=2, column=0, columnspan=12, padx=10, pady=2)
 		self.lmain = Label(imageFrame)
 		self.lmain.grid(row=0, column=0)
 		self.cap = cv2.VideoCapture(0)
 
-		self.r = Room.Room()
+		self.r = Room.Room(self.master)
 		self.r.loop()
 		self.show_frame()
+		self.master.mainloop()
 
 
 	def update_clock(self):
@@ -71,15 +73,13 @@ class App(Frame):
 		self.lmain.configure(image=imgtk)
 		self.up.configure(text=self.r.totalUp)
 		self.down.configure(text=self.r.totalDown)
-		Room.root.after(25, self.show_frame)
+		self.master.after(25, self.show_frame)
 
 
 #Set up GUI
 
-app=App(Room.root)
+app=App()
 
 
 
-Room.root.mainloop()
 
-del app.r

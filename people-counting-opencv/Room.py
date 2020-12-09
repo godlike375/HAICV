@@ -1,4 +1,3 @@
-
 import argparse
 
 from pyimagesearch.centroidtracker import CentroidTracker
@@ -10,10 +9,6 @@ import time
 import dlib
 import cv2
 
-from tkinter import *
-
-root = Tk()  #Makes main window
-root.wm_title("HAICV")
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--input", type=str,
@@ -32,7 +27,8 @@ CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
 
 
 class Room:
-	def __init__(self):
+	def __init__(self, master):
+		self.master = master
 		# if a video path was not supplied, grab a reference to the webcam
 		if not args.get("input", False):
 			print("[INFO] starting video stream...")
@@ -213,7 +209,7 @@ class Room:
 
 		# show the output frame
 		self.videoframe = rgb
-		root.after(25, self.loop)
+		self.master.after(25, self.loop)
 
 		self.totalFrames = self.totalFrames+1
 
@@ -228,4 +224,3 @@ class Room:
 			self.vs.release()
 
 		# close any open windows
-		cv2.destroyAllWindows()

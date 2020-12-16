@@ -11,7 +11,7 @@ def setup():
        format='%(funcName)s-%(levelname)s-%(message)s'
     )
 
-def send_counters(rooms, link='http://www.mysite.com'):
+def send_counters(rooms, link='http://localhost:8080/set.php'):
     counters = {}
     for i in rooms:
         counters[i.name] = i.total

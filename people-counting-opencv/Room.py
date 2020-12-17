@@ -173,7 +173,7 @@ class Room:
                     # line, count the object
                     if direction < 0 and centroid[1] < H // 2:
                         self.totalUp += 1
-                        self.total = self.totalUp - self.totalDown if (self.totalUp - self.totalDown)>0 else 0
+                        self.total = self.totalDown - self.totalUp
                         to.counted = True
 
                     # if the direction is positive (indicating the object
@@ -181,7 +181,7 @@ class Room:
                     # center line, count the object
                     elif direction > 0 and centroid[1] > H // 2:
                         self.totalDown += 1
-                        self.total = self.totalUp - self.totalDown if (self.totalUp - self.totalDown)>0 else 0
+                        self.total = self.totalDown - self.totalUp
                         to.counted = True
 
             # store the trackable object in our dictionary

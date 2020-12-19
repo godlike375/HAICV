@@ -108,9 +108,9 @@ class App(Frame):
                           command=self.choose_camera).grid(row=0, column=6)
         self.newcam = Button(text="Добавить камеру", fg="green yellow", bg="gray22", font=("Arial", 9),
                              command=self.new_camera).grid(row=0, column=8)
-        imageFrame = Frame(self.master, width=602, height=600, bg="gray22", )
+        imageFrame = Frame(self.master, width=602, height=600)
         imageFrame.grid(row=2, column=0, columnspan=12, padx=10, pady=2)
-        self.lmain = Label(imageFrame)
+        self.lmain = Label(imageFrame, bg="gray22", highlightthickness = 0, bd = 0)
         self.lmain.grid(row=0, column=0)
 
         # self.current_room_number = 0
